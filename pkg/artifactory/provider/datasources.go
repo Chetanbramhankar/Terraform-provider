@@ -14,6 +14,7 @@ import (
 	"github.com/jfrog/terraform-provider-artifactory/v7/pkg/artifactory/resource/repository/federated"
 	"github.com/jfrog/terraform-provider-artifactory/v7/pkg/artifactory/resource/repository/local"
 	"github.com/jfrog/terraform-provider-artifactory/v7/pkg/artifactory/resource/repository/remote"
+	"github.com/jfrog/terraform-provider-artifactory/v7/pkg/artifactory/resource/repository/virtual"
 	"github.com/jfrog/terraform-provider-shared/util"
 )
 
@@ -85,6 +86,16 @@ func datasourcesMap() map[string]*schema.Resource {
 	for _, packageType := range federated.PackageTypesLikeGeneric {
 		federatedDataSourceName := fmt.Sprintf("artifactory_federated_%s_repository", packageType)
 		dataSourcesMap[federatedDataSourceName] = datasource_federated.DataSourceArtifactoryFederatedGenericRepository(packageType)
+	}
+
+	for _, packageType := range virtual.PackageTypesLikeGeneric {
+		virtualResourceName := fmt.Sprintf("artifactory_virtual_%s_repository", packageType)
+		resourcesMap[virtualResourceName] = virtual.ResourceArtifactoryVirtualGenericRepository(packageType)
+	}
+
+	for _, repoType := range virtual.PackageTypesLikeGenericWithRetrievalCachePeriodSecs {
+		virtualResourceName := fmt.Sprintf("artifactory_virtual_%s_repository", repoType)
+		resourcesMap[virtualResourceName] = virtual.ResourceArtifactoryVirtualRepositoryWithRetrievalCachePeriodSecs(repoType)
 	}
 
 	return util.AddTelemetry(productId, dataSourcesMap)
